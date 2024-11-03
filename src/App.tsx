@@ -29,9 +29,21 @@ function App() {
   const [mnemonic, setMnemonic] = useState<string>("");
   const [jwk, setJwk] = useState();
   const [address, setAddress] = useState<string>("");
-  const [ndef, _] = useState(new NDEFReader());
+  const [ndef, setNdef] = useState<NDEFReader>();
 
   useEffect(() => {
+    async function load() {
+      if (!("NDEFReader" in window)) {
+        return;
+      }
+      const ndef = new NDEFReader();
+      setNdef(ndef);
+    }
+    load();
+  }, [])
+
+  useEffect(() => {
+    if (!ndef) return;
     function readError() {
       console.log("Argh! Cannot read data from the NFC tag. Try another one?");
       alert("Argh! Cannot read data from the NFC tag. Try another one?");
@@ -103,7 +115,7 @@ function App() {
 
   return (
     <>
-      <div>NFC: {("NDEFReader" in window).toString()}</div>
+      <div>NFC: {ndef ? "supported" : "not supported"}</div>
       {/* <button onClick={scan}>scan</button><br /><br /> */}
 
       <div><pre>{address}</pre></div>
