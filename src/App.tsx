@@ -97,9 +97,14 @@ function App() {
 
 
   async function genWallet() {
-    console.log("gen wallet");
-    const m = await generateMnemonic();
-    setMnemonic(m);
+    try {
+      console.log("gen wallet");
+      const m = await generateMnemonic();
+      setMnemonic(m);
+    } catch (e) {
+      alert(e)
+      console.error(e);
+    }
   }
 
   async function readNfc() {
