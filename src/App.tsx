@@ -8,33 +8,6 @@ const ar = Arweave.init({
   protocol: "https",
 });
 
-// async function scan() {
-//   console.log("User clicked scan button");
-
-//   // alert(window.NDEFReader)
-
-//   try {
-//     const ndef = new NDEFReader();
-//     await ndef.scan();
-//     console.log("> Scan started");
-
-//     ndef.addEventListener("readingerror", () => {
-//       console.log("Argh! Cannot read data from the NFC tag. Try another one?");
-//       alert("Argh! Cannot read data from the NFC tag. Try another one?");
-//     });
-
-//     ndef.addEventListener("reading", (e) => {
-//       console.log("NFC tag detected: ", e);
-//       alert("NFC tag detected: " + JSON.stringify(e));
-//       // console.log(serialNumber, message);
-//       // console.log(`> Serial Number: ${serialNumber}`);
-//       // console.log(`> Records: (${message.records.length})`);
-//     });
-//   } catch (error) {
-//     console.log("Argh! " + error);
-//   }
-
-// }
 
 async function write(data: string) {
   console.log("User clicked write button");
@@ -52,22 +25,37 @@ async function write(data: string) {
 
 }
 
-// async function readOnly() {
-//   console.log("User clicked make read-only button");
-
-//   try {
-//     const ndef = new NDEFReader();
-//     await ndef.makeReadOnly();
-//     console.log("> NFC tag has been made permanently read-only");
-//   } catch (error) {
-//     console.log("Argh! " + error);
-//   }
-// }
-
 function App() {
   const [mnemonic, setMnemonic] = useState<string>("");
   const [jwk, setJwk] = useState();
   const [address, setAddress] = useState<string>("");
+  const [ndef, _] = useState(new NDEFReader());
+
+  useEffect(() => {
+    function readError() {
+      console.log("Argh! Cannot read data from the NFC tag. Try another one?");
+      alert("Argh! Cannot read data from the NFC tag. Try another one?");
+
+    }
+
+    async function reading(e) {
+      console.log("NFC tag detected: ", e);
+      const message = (e as any).message;
+      console.log(message);
+      const decoder = new TextDecoder();
+      const text = decoder.decode(message.records[0].data);
+      console.log(text);
+      setMnemonic(text);
+    }
+
+    ndef.addEventListener("readingerror", readError);
+    ndef.addEventListener("reading", reading);
+
+    return () => {
+      ndef.removeEventListener("readingerror", readError);
+      ndef.removeEventListener("reading", reading);
+    }
+  }, [ndef])
 
   useEffect(() => {
     async function load() {
@@ -109,24 +97,8 @@ function App() {
 
   async function readNfc() {
     console.log("read wallet");
-    const ndef = new NDEFReader();
     await ndef.scan();
     console.log("> Scan started");
-
-    ndef.addEventListener("readingerror", () => {
-      console.log("Argh! Cannot read data from the NFC tag. Try another one?");
-      alert("Argh! Cannot read data from the NFC tag. Try another one?");
-    });
-
-    ndef.addEventListener("reading", async (e) => {
-      console.log("NFC tag detected: ", e);
-      const message = (e as any).message;
-      console.log(message);
-      const decoder = new TextDecoder();
-      const text = decoder.decode(message.records[0].data);
-      console.log(text);
-      setMnemonic(text);
-    });
   }
 
   return (
