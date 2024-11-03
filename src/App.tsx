@@ -1,10 +1,10 @@
-// import Arweave from "arweave";
+import Arweave from "arweave";
 
-// const ar = Arweave.init({
-//   host: "arweave.net",
-//   port: 443,
-//   protocol: "https",
-// });
+const ar = Arweave.init({
+  host: "arweave.net",
+  port: 443,
+  protocol: "https",
+});
 
 async function scan() {
   console.log("User clicked scan button");
@@ -20,10 +20,11 @@ async function scan() {
       console.log("Argh! Cannot read data from the NFC tag. Try another one?");
     });
 
-    ndef.addEventListener("reading", ({ message, serialNumber }) => {
-      console.log(serialNumber, message);
-      console.log(`> Serial Number: ${serialNumber}`);
-      console.log(`> Records: (${message.records.length})`);
+    ndef.addEventListener("reading", (e) => {
+      console.log("NFC tag detected: ", e);
+      // console.log(serialNumber, message);
+      // console.log(`> Serial Number: ${serialNumber}`);
+      // console.log(`> Records: (${message.records.length})`);
     });
   } catch (error) {
     console.log("Argh! " + error);
