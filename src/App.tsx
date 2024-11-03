@@ -18,10 +18,12 @@ async function scan() {
 
     ndef.addEventListener("readingerror", () => {
       console.log("Argh! Cannot read data from the NFC tag. Try another one?");
+      alert("Argh! Cannot read data from the NFC tag. Try another one?");
     });
 
     ndef.addEventListener("reading", (e) => {
       console.log("NFC tag detected: ", e);
+      alert("NFC tag detected: " + JSON.stringify(e));
       // console.log(serialNumber, message);
       // console.log(`> Serial Number: ${serialNumber}`);
       // console.log(`> Records: (${message.records.length})`);
@@ -62,7 +64,7 @@ function App() {
 
   async function handleWriteWallet() {
     const w = await ar.wallets.generate();
-    await write(w.toString());
+    await write(JSON.stringify(w));
     console.log(w);
     alert("Wallet written to NFC tag");
   }
