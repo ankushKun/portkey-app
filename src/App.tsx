@@ -9,7 +9,7 @@ const ar = Arweave.init({
 async function scan() {
   console.log("User clicked scan button");
 
-  alert(window.NDEFReader)
+  // alert(window.NDEFReader)
 
   try {
     const ndef = new NDEFReader();
@@ -41,8 +41,10 @@ async function write(data: string) {
     const ndef = new NDEFReader();
     await ndef.write(data);
     console.log("> Message written");
+    alert("Message written");
   } catch (error) {
     console.log("Argh! " + error);
+    alert("Argh! " + error);
     throw error;
   }
 
