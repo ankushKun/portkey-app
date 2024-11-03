@@ -115,7 +115,7 @@ function App() {
 
     ndef.addEventListener("reading", async (e) => {
       console.log("NFC tag detected: ", e);
-      const message = e.message;
+      const message = (e as any).message;
       console.log(message);
       const decoder = new TextDecoder();
       const text = decoder.decode(message.records[0].data);
