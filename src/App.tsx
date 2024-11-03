@@ -1,4 +1,5 @@
 import Arweave from "arweave";
+import { useState } from "react";
 
 const ar = Arweave.init({
   host: "arweave.net",
@@ -63,19 +64,29 @@ async function write(data: string) {
 // }
 
 function App() {
+  const [w, setW] = useState<string>();
 
   async function handleWriteWallet() {
-    const w = await ar.wallets.generate();
     await write(JSON.stringify(w));
     console.log(w);
     alert("Wallet written to NFC tag");
   }
 
+
+  async function genWallet() {
+    const w = await ar.wallets.generate();
+    setW(JSON.stringify(w));
+  }
+
   return (
     <>
       <div>NFC: {("NDEFReader" in window).toString()}</div>
-      <button onClick={scan}>scan</button>
-      <button onClick={handleWriteWallet}>write wallet</button>
+      <button onClick={scan}>scan</button><br /><br />
+
+      <input type="text" value={w} onChange={(e) => setW(e.target.value)} />
+      <button onClick={handleWriteWallet}>write</button><br />
+
+      <button onClick={genWallet}>gen wallet</button>
     </>
   )
 }
